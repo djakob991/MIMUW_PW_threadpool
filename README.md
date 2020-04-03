@@ -1,7 +1,7 @@
-# PW_zadanie2
+# PW_threadpool
 Zadanie 2 z przedmiotu 'Programowanie Współbieżne'
 
-Treść zadania:
+## Treść zadania:
 
 Zadanie zaliczeniowe 2: Asynchroniczne C
 Wprowadzenie
