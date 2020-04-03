@@ -4,6 +4,7 @@ Zadanie 2 z przedmiotu 'Programowanie Współbieżne'
 ## Treść zadania:
 
 Zadanie zaliczeniowe 2: Asynchroniczne C
+
 Wprowadzenie
 
 Pula wątków to mechanizm pozwalający na uzyskanie współbieżnego wykonywanie wielu zadań w ramach jednego programu. W skład puli wchodzi pewna liczba wątków roboczych (ang. worker threads), czekających na pojawienie się pracy do wykonania.
