@@ -25,7 +25,7 @@ Polecenie
 Szczegółowy opis puli wątków
 
 Pulę wątków należy zaimplementować jako realizację interfejsu przedstawionego w pliku "threadpool.h". Zamieszczone tam są m.in. następujące deklaracje:
-
+```
 typedef struct runnable {
   void (*function)(void *, size_t);
   void *arg;
@@ -41,7 +41,7 @@ int thread_pool_init(thread_pool_t *pool, size_t pool_size);
 void thread_pool_destroy(thread_pool_t *pool);
 
 int defer(thread_pool_t *pool, runnable_t runnable);
-
+```
 Wywołanie thread_pool_init inicjuje argument wskazywany przez pool jako nową pulę, w której będzie funkcjonować pool_size wątków obsługujących zgłoszone do wykonania zadania. Za gospodarkę pamięcią wskazywaną przez pool odpowiada użytkownik biblioteki. Poprawność działania biblioteki jest gwarantowana tylko, jeśli każda pula stworzona przez thread_pool_init jest niszczona przez wywołanie thread_pool_destroy z argumentem reprezentującym tę pulę.
 
 Wywołanie defer(pool, runnable) zleca puli wątków pool wykonanie zadania opisanego przez argument runnable, argumenty function są przekazywane przez wskaźnik args, w polu argsz znajduje się długość dostępnego do pisania i czytania buforu znajdującego się pod tym wskaźnikiem. Za zarządzanie pamięcią wskazywaną przez args odpowiada klient biblioteki.
@@ -54,7 +54,7 @@ Zastanów się nad tym, jak zrealizować powyższą bibliotekę tak, aby wykonyw
 Szczegółowy opis mechanizmu obliczeń future
 
 Przy pomocy puli wątków i operacji defer należy zaimplenentować asynchroniczne obliczenia future jako realizację interfejsu przedstawionego w pliku "future.h". Zamieszczone są tam m.in. następujące deklaracje:
-
+```
 typedef struct callable {
   void *(*function)(void *, size_t, size_t *);
   void *arg;
@@ -70,7 +70,7 @@ int map(thread_pool_t *pool, future_t *future, future_t *from,
         void *(*function)(void *, size_t, size_t *));
 
 void *await(future_t *future);
-
+```
 Wywołanie int err = async(pool, future_value, callable) inicjuje pamięć wskazywaną przez future_value. Za zarządanie tą pamięcią odpowiada użytkownik biblioteki. Na puli pool zlecane jest wykonanie function z argumentu callable. Funkcja function zwraca wskaźnik do wyniku. Użytkownik biblioteki powinien zadbać, żeby poprawnie ustawiła też rozmiar wyniku wykorzystując do tego celu trzeci argument typu size_t*.
 
 Wołający może teraz:
@@ -91,7 +91,7 @@ Dla ułatwienia implementacji można założyć, że zaimplementowana biblioteka
 Opis programu macierz
 
 Program macierz ma ze standardowego wejścia wczytywać dwie liczby k oraz n, każda w osobnym wierszu. Liczby te oznaczają odpowiednio liczbę wierszy oraz kolumn macierzy. Następnie program ma wczytać k*n linijek z danymi, z których każda zawiera dwie, oddzielone spacją liczby: v, t. Liczba v umieszczona w linijce i (numerację linijek zaczynamy od 0) określa wartość macierzy z wiersza floor(i/n) (numerację kolumn i wierszy zaczynamy od 0) oraz kolumny i mod n. Liczba t to liczba milisekund, jakie są potrzebne do obliczenia wartości v. Oto przykładowe poprawne dane wejściowe:
-
+```
 2
 3
 1 2
@@ -100,40 +100,35 @@ Program macierz ma ze standardowego wejścia wczytywać dwie liczby k oraz n, ka
 23 9
 3 11
 7 2
-
+```
 Takie dane wejściowe tworzą macierz od dwóch wierszach i trzech kolumnach:
-
+```
 |  1  1 12 |
 | 23  3  7 |
+```
+Program ma za zadanie wczytać tak sformatowane wejście (można zakładać, że podawane będą tylko poprawne dane), a następnie za pomocą puli wątków zawierającej 4 wątki policzyć sumy wierszy, przy czym pojedyncze zadanie obliczeniowe powinno podawać w wyniku wartość pojedynczej komórki macierzy, odczekawszy liczbę milisekund, które zostały wczytane jako potrzebne do obliczenia tej wartości (np. zadanie obliczeniowe wyliczenia wartości 3 z macierzy powyżej powinno odczekiwać 11 milisekund). Po obliczeniu należy wypisać sumy kolejnych wierszy na standardowe wyjście, po jednej sumie w wierszu. 
 
-Program ma za zadanie wczytać tak sformatowane wejście (można zakładać, że podawane będą tylko poprawne dane), a następnie za pomocą puli wątków zawierającej 4 wątki policzyć sumy wierszy, przy czym pojedyncze zadanie obliczeniowe powinno podawać w wyniku wartość pojedynczej komórki macierzy, odczekawszy liczbę milisekund, które zostały wczytane jako potrzebne do obliczenia tej wartości (np. zadanie obliczeniowe wyliczenia wartości 3 z macierzy powyżej powinno odczekiwać 11 milisekund). Po obliczeniu należy wypisać sumy kolejnych wierszy na standardowe wyjście, po jednej sumie w wierszu. Dla przykładowej macierzy powyżej umieszczonej w pliku data1.dat wywołanie:
 
-$ cat data1.dat | ./macierz
-
-powinno spowodować pojawienie się na wyjściu
-
-14
-33
 
 Opis programu silnia
 
 Program silnia powinien wczytywać ze standardowego wejścia pojedynczą liczbę n, a następnie obliczać za pomocą puli 3 wątków liczbę n!. Po obliczeniu tej liczby wynik powinien zostać wypisany na standardowe wyjście. Program powinien wyliczać silnię, wykorzystując funkcję map i przekazując jej w future_value częściowe iloczyny. Dla przykładu wywołanie:
-
+```
 $ echo 5 | ./silnia
-
+```
 powinno spowodować pojawienie się na wyjściu
-
+```
 120
-
+```
 Wymagania techniczne
 
 Do synchronizacji można korzystać tylko z mechanizmów biblioteki pthreads. Można korzystać z plików nagłówkowych:
-
+```
 #include <pthread.h>
 #include <semaphore.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+```
 Powyższa lista może ulec rozszerzeniu, jeśli okaże się to konieczne. 
